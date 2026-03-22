@@ -1,8 +1,10 @@
-<img width="764" height="755" alt="image" src="https://github.com/user-attachments/assets/06ada546-70d7-476a-90f2-3243e356b4ca" />
+
 # Laboratório Virtual de Gases Ideais em Realidade Aumentada
 
 Projeto desenvolvido para a disciplina de Realidade Aumentada.
 Simulação interativa da Lei dos Gases Ideais (PV = nRT) usando A-Frame e AR.js.
+
+<img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/06ada546-70d7-476a-90f2-3243e356b4ca" />
 
 ---
 
@@ -101,7 +103,7 @@ As animações dinâmicas são calculadas por JavaScript a cada frame dentro da 
 
 ---
 
-## Telas
+## Imagens 
 <img width="886" height="532" alt="Captura de tela de 2026-03-22 19-55-11" src="https://github.com/user-attachments/assets/3b3f6277-9635-42ae-900c-124d5f5310f4" />
 
 
