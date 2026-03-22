@@ -8,12 +8,18 @@ Simulação interativa da Lei dos Gases Ideais (PV = nRT) usando A-Frame e AR.js
 
 ---
 
+## Onde posso ver a aplicação?
+Você pode visualizar o projeto através do link: https://labvirtual-gases.netlify.app/
+
+---
+
 ## Como usar
 
 1. Imprima ou exiba o marcador **HIRO** na tela
 2. Abra o projeto no navegador do celular
-3. Clique em **INICIAR SIMULAÇÃO**
-4. Aponte a câmera para o marcador
+3. Aceite a permissão de utilizar a câmera do celular
+4. Clique em **INICIAR SIMULAÇÃO**
+5. Aponte a câmera para o marcador
 
 ---
 
