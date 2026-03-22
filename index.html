@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <title>WebAR Gas Simulation - Laboratório Virtual</title>
+
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+  
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+
+</head>
+<body>
+
+<div id="overlay"></div>
+<div id="feedbackToque"></div>
+
+<div id="introScreen">
+  <div class="intro-container">
+
+    <div class="intro-title">LABORATÓRIO VIRTUAL</div>
+    <div class="intro-subtitle">GASES IDEAIS EM REALIDADE AUMENTADA</div>
+
+    <div class="intro-equation">
+      <h2>PV = nRT</h2>
+      <p>Lei dos Gases Ideais</p>
+    </div>
+
+    <div class="intro-info">
+      <div class="info-card"><div class="symbol">P</div><div class="desc">Pressão<br>Força por área</div></div>
+      <div class="info-card"><div class="symbol">V</div><div class="desc">Volume<br>Espaço ocupado</div></div>
+      <div class="info-card"><div class="symbol">T</div><div class="desc">Temperatura<br>Energia cinética</div></div>
+    </div>
+
+    <div class="instruction-box">
+      <p><span class="highlight">&rsaquo;</span> Aponte a câmera para o marcador HIRO</p>
+      <p><span class="highlight">&rsaquo;</span> Arraste para rotacionar o cubo pelo próprio eixo</p>
+      <p><span class="highlight">&rsaquo;</span> Toque duplo na tela para adicionar partícula</p>
+      <p><span class="highlight">&rsaquo;</span> Use os controles na parte inferior</p>
+    </div>
+
+    <button id="startBtn">INICIAR SIMULAÇÃO</button>
+  </div>
+</div>
+
+<div id="dataPanel">
+  <b>GAS IDEAL</b>
+  <div class="data-row"><span class="data-label">Temperatura</span><span id="tempVal">300</span> K</div>
+  <div class="data-row"><span class="data-label">Pressão</span><span id="pressureVal">0</span> Pa</div>
+  <div class="data-row"><span class="data-label">Volume</span><span id="volumeVal">1</span> m³</div>
+  <div class="data-row"><span class="data-label">Vel. média</span><span id="speedVal">0</span> m/s</div>
+  <div class="data-row"><span class="data-label">Partículas</span><span id="countVal">0</span></div>
+</div>
+
+<div id="pvPanel">
+  <div class="chart-title">DIAGRAMA P-V</div>
+  <canvas id="pvChart"></canvas>
+  <div class="pv-eq">PV = NkT</div>
+  <div id="pvBadge">
+    <span>P: <span id="badgeP">0</span></span>
+    <span>V: <span id="badgeV">1.0</span></span>
+    <span>T: <span id="badgeT">300</span></span>
+  </div>
+</div>
+
+<div id="volumeContainer">
+  <div>VOL: <span id="volDisplay">1.0</span> m³</div>
+  <input id="volumeSlider" type="range" min="1" max="2" step="0.1" value="1">
+</div>
+
+<div id="controls">
+  <button id="modeBtn">AQUECENDO</button>
+  <button id="pauseBtn">PAUSAR</button>
+  <button id="addBtn">+ PART</button>
+  <button id="clearBtn">LIMPAR</button>
+  <button id="toggleViewBtn">GRAFICO</button>
+</div>
+
+<a-scene
+  embedded
+  arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best;"
+  renderer="antialias: true; alpha: true; near: 0.01; far: 1000;"
+  vr-mode-ui="enabled: false"
+  loading-screen="enabled: false">
+
+  <a-marker preset="hiro" id="marker">
+
+    <!--
+      gasContainer em position="0 0.5 0" — centro geométrico do cubo.
+      Rotacionar este entity gira em torno do próprio eixo do cubo.
+      animation__bob: flutuação suave no eixo Y (declarativa, A-Frame).
+      Pulso de escala, tremor e brilho: controlados em physics.js.
+    -->
+    <a-entity
+      id="gasContainer"
+      position="0 0.5 0"
+      animation__bob="property: position;
+                       from: 0 0.5 0;
+                       to:   0 0.56 0;
+                       dur: 2200;
+                       loop: true;
+                       dir: alternate;
+                       easing: easeInOutSine">
+
+      <a-box
+        id="container"
+        position="0 0 0"
+        width="1" height="1" depth="1"
+        material="opacity: 0.25; transparent: true; color: blue">
+      </a-box>
+
+      <a-entity id="particles"></a-entity>
+
+
+    </a-entity>
+
+    <a-entity id="thermometer" position="0.9 0.5 0" rotation="90 0 0">
+      <a-cylinder height="1"   radius="0.05" color="#cccccc" opacity="0.3" transparent="true"></a-cylinder>
+      <a-cylinder height="0.2" radius="0.04" color="red" position="0 -0.4 0" id="thermoLiquid"></a-cylinder>
+      <a-cylinder height="0.1" radius="0.08" color="red" position="0 -0.55 0"></a-cylinder>
+    </a-entity>
+
+    <!--
+      Fogo fixo no canto inferior esquerdo do cubo.
+      Fica fora do gasContainer (como o termômetro) — não gira com o cubo.
+      position: x=-0.5 (esquerda), y=0 (base), z=0.5 (frente)
+      animation-mixer: toca a animação interna do GLB (exportada pelo Sketchfab).
+        clampWhenFinished: false + loop: repeat = toca em loop.
+        timeScale: 0 = parado (animação congelada). controls.js muda para 1 ao aquecer.
+    -->
+   <a-entity
+      id="fireModel"
+      gltf-model="models/fire.glb"
+      position="-5.9 -1.5 0.5"
+      rotation = "-90 0 0"
+      scale="1.5 1.5 1.5"
+      animation-mixer="clip: *; loop: repeat; clampWhenFinished: false; timeScale: 1"
+      visible="false">
+    </a-entity>
+
+    <a-entity
+      id="iceModel"
+      gltf-model="models/snowflakes.glb"
+      position="0.9 0 0"
+      scale="1 1 1"
+      animation-mixer="clip: *; loop: repeat; clampWhenFinished: false; timeScale: 0"
+      visible="false">
+    </a-entity>
+
+  </a-marker>
+
+  <a-entity camera="near: 0.01; far: 1000;" fix-clipping></a-entity>
+
+</a-scene>
+
+<script src="js/config.js"></script>
+<script src="js/sounds.js"></script>
+<script src="js/particles.js"></script>
+<script src="js/physics.js"></script>
+<script src="js/chart.js"></script>
+<script src="js/controls.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
