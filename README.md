@@ -151,8 +151,9 @@ As animações dinâmicas são calculadas por JavaScript a cada frame dentro da 
 * [x] Acesso via HTTPS funcionando em dispositivos móveis
 * [x] Permissão de câmera solicitada e aplicação funcionando corretamente
 
-
 ## Uso de Inteligência Artificial no Projeto
+
+<img width="1324" height="367" alt="image" src="https://github.com/user-attachments/assets/c1fd027b-4f1d-47f3-80b6-3a98b57fd580" />
 
 Durante o desenvolvimento deste laboratório virtual, ferramentas de Inteligência Artificial foram utilizadas como apoio para acelerar o desenvolvimento, melhorar a organização do código e auxiliar na resolução de problemas.
 
